@@ -1,0 +1,7 @@
+<RCC>
+    <!-- QML files -->
+    <qresource prefix="/">
+        <file alias="qml/window.qml">gui/qml/window.qml</file>
+        <file alias="js/UI.js">gui/js/UI.js</file>
+    </qresource>
+</RCC>
