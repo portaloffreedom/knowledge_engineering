@@ -9,12 +9,14 @@
 class Class {
 public:
     enum Type {
-
+        NORMAL,
+        ABSOLUTE_DIFFERENCE,
+        RELATIVE_DIFFERENCE,
     };
 
     enum Value {
         GOOD,
-        BAD
+        BAD,
     };
 
     Type type;
