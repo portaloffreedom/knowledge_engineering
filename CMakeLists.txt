@@ -48,15 +48,6 @@ add_subdirectory(src/controller)
 
 QT5_ADD_RESOURCES(knowledge_engineering_RCC_SRCS ${knowledge_engineering_QRC})
 
-#foreach(knowledge_engineering_QT_HEADER ${knowledge_engineering_QT_HEADERS})
-#    GET_FILENAME_COMPONENT(knowledge_engineering_MOC ${knowledge_engineering_QT_HEADER} NAME_WE)
-#    GET_FILENAME_COMPONENT(knowledge_engineering_DIR ${knowledge_engineering_QT_HEADER} DIRECTORY)
-#    set(knowledge_engineering_MOC "${knowledge_engineering_DIR}/${knowledge_engineering_MOC}.moc")
-#    #message(${knowledge_engineering_SRC} " - " ${knowledge_engineering_MOC} " ;")
-#    qt5_generate_moc(${knowledge_engineering_QT_HEADER} ${knowledge_engineering_MOC})
-#    set(knowledge_engineering_MOCS ${knowledge_engineering_MOCS} ${knowledge_engineering_MOC})
-#endforeach()
-
 add_executable(knowledge_engineering ${knowledge_engineering_SRCS} ${knowledge_engineering_MOCS} ${knowledge_engineering_RCC_SRCS})
 target_link_libraries(knowledge_engineering ${Qt5Sql_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Qml_LIBRARIES} ${Qt5Quick_LIBRARIES} ${Qt5Widgets_LIBRARIES})
 

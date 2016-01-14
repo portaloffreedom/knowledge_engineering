@@ -22,8 +22,13 @@ public:
 protected:
     void setup();
 
+    void loadData();
+
+    void loadContext();
+
     QQmlEngine* engine;
     QQuickWindow* window;
+    QList<QObject *> *playerList;
 };
 
 
