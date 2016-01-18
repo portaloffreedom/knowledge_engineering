@@ -47,6 +47,9 @@ Q_OBJECT
                        specialChanged)
 
 public:
+    Player(QObject *parent = nullptr);
+
+    Player(const Player &player);
     Player(QObject *parent, const QString &name, const QString &surname, qreal height, void *picture, bool special);
 
     QString name;
@@ -112,9 +115,10 @@ signals:
     void specialChanged(bool newValue);
 
 private:
-    unsigned int privateIDGenerator();
+    static unsigned int privateIDGenerator();
     unsigned int privateID;
 };
 
+Q_DECLARE_METATYPE(Player)
 
 #endif //KNOWLEDGE_ENGINEERING_PLAYER_H

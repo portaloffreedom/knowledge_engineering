@@ -6,8 +6,6 @@
 #include <QQmlContext>
 #include "Controller.h"
 
-#include "Player.h"
-
 Controller::Controller(int argc, char** argv)
         : QApplication(argc, argv),
           engine(nullptr),
@@ -26,6 +24,8 @@ int Controller::exec() {
 
 void Controller::setup() {
     engine = new QQmlEngine(this);
+    loadContext();
+
     QQmlComponent* mainQmlView = new QQmlComponent(engine, this);
     connect(engine, SIGNAL(quit()), this, SLOT(quit()));
 
@@ -37,14 +37,12 @@ void Controller::setup() {
 
     QObject *topLevel = mainQmlView->create();
     window = qobject_cast<QQuickWindow*>(topLevel);
-
-    loadContext();
 }
 
 void Controller::loadData() {
-    this->playerList = new QList<QObject *>;
-    this->playerList->append(new Player(this, "Matteo", "De Carlo", 175.0, NULL, false));
-    this->playerList->append(new Player(this, "Ruben", "Sikkes", 180.0, NULL, true));
+    playerList = new QList<QObject *>;
+    createPlayer("Matteo", "De Carlo", 175.0, NULL, false);
+    createPlayer("Ruben", "Sikkes", 180.0, NULL, true);
 }
 
 #include <QJsonArray>
@@ -53,17 +51,15 @@ void Controller::loadContext() {
     loadData();
 
     QQmlContext *context = engine->rootContext();
-    std::cout << "number of elements in player list:   " << playerList->size() << std::endl;
-    std::cout << "number of elements after conversion: " << QVariant::fromValue((*playerList)).toJsonArray().size() <<
-    std::endl;
+    //std::cout << "number of elements in player list:   " << playerList->size() << std::endl;
+    //std::cout << "number of elements after conversion: " << QVariant::fromValue((*playerList)).toJsonArray().size() <<
+    //std::endl;
     context->setContextProperty("playerList", QVariant::fromValue((*playerList)));
+    context->setContextProperty("appController", this);
+}
 
-
-    QStringList dataList;
-    dataList.append("Item 1");
-    dataList.append("Item 2");
-    dataList.append("Item 3");
-    dataList.append("Item 4");
-
-    context->setContextProperty("_playerList", QVariant::fromValue(dataList));
+void Controller::createPlayer(const QString &name, const QString &surname, qreal height, void *picture, bool special) {
+    playerList->append(new Player(this, name, surname, height, picture, special));
+    QQmlContext *context = engine->rootContext();
+    context->setContextProperty("playerList", QVariant::fromValue((*playerList)));
 }

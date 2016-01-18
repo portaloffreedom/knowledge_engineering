@@ -9,6 +9,7 @@
 #include <QtQml/QQmlComponent>
 #include <QQuickWindow>
 #include <QApplication>
+#include "Player.h"
 
 class Controller : public QApplication {
     Q_OBJECT
@@ -18,6 +19,9 @@ public:
     virtual ~Controller();
 
     int exec();
+
+    Q_INVOKABLE void createPlayer(const QString &name = "", const QString &surname = "", qreal height = 0,
+                                  void *picture = nullptr, bool special = false);
 
 protected:
     void setup();

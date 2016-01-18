@@ -9,13 +9,33 @@ unsigned int Player::privateIDGenerator() {
     return ++privateIDCounter;
 }
 
+Player::Player(QObject *parent)
+        : QObject(parent)
+          , name("")
+          , surname("")
+          , height(0)
+          , picture(nullptr)
+          , special(false)
+          , privateID(Player::privateIDGenerator()) {
+}
+
+Player::Player(const Player &player)
+        : QObject(player.parent())
+          , name(player.name)
+          , surname(player.surname)
+          , height(player.height)
+          , picture(player.picture)
+          , special(player.special)
+          , privateID(player.privateID) {
+}
+
+
 Player::Player(QObject *parent, const QString &name, const QString &surname, qreal height, void *picture, bool special)
         : QObject(parent)
           , name(name)
           , surname(surname)
           , height(height)
           , picture(picture)
-          , special(special) {
-
-    privateID = this->privateIDGenerator();
+          , special(special)
+          , privateID(Player::privateIDGenerator()) {
 }

@@ -12,25 +12,83 @@ ApplicationWindow {
     visible: true
 
     Rectangle {
-        id: profileSelection
-        x: profileSelectionButton.x
-        y: profileSelectionButton.y
+        id: player_creation
+        x: player_creation_button.x + player_creation_button.anchors.leftMargin
+        y: player_creation_button.y + player_creation_button.anchors.topMargin
         z: 1000000000
-        width: profileSelectionButton.width
-        height: profileSelectionButton.height
-        color: "transparent"
+        //width: player_creation_button.width
+        //height: player_creation_button.height
+        //color: "white"
+        opacity: 0
         property bool enlarged: false
 
+        MouseArea {
+            // capturing input so it doens't do transparent things
+            id: player_creation_mouse_area
+            anchors.fill: player_creation_group_box
+            enabled: false
+            //onClicked: {} //ignore input
+        }
+
         states: State {
-            name: "collapsed"; when: profileSelection.enlarged == true
-            PropertyChanges { target: profileSelection; width: 500; height: 300; color: "yellow" }
+            name: "collapsed"; when: player_creation.enlarged == true
+            PropertyChanges {
+                target: player_creation
+                //width: 500; height: 300
+                opacity: 1
+            }
+            PropertyChanges {
+                target: player_creation_mouse_area
+                enabled: true
+            }
         }
 
         transitions: Transition {
             from: ""; to: "collapsed"; reversible: true
             ParallelAnimation {
-                NumberAnimation { id: sizeAnimation; properties: "width,height"; duration: 250; easing.type: Easing.InOutCubic }
-                ColorAnimation { duration: sizeAnimation.duration; easing.type: sizeAnimation.easing.type; }
+                OpacityAnimator { id: opacityAnimation; duration: 250; easing.type: Easing.InOutCubic }
+                NumberAnimation { properties: "width,height"; duration: opacityAnimation.duration; easing.type: opacityAnimation.easing.type; }
+            }
+        }
+
+        GroupBox {
+            id: player_creation_group_box
+            title: "Insert new Player"
+            width: 500
+            ColumnLayout {
+                id: column
+                anchors.fill: parent
+
+                TextField {
+                    id: name_field
+                    Layout.fillWidth: true
+                    placeholderText: "Name"
+                }
+
+                TextField {
+                    id: surname_field
+                    Layout.fillWidth: true
+                    placeholderText: "Surname"
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Label { text: "Special"; Layout.fillWidth: true }
+                    Switch { id: special_field; checked: false }
+                }
+
+                SpinBox { id: height_field; value: 100; minimumValue: 0; maximumValue: 300; Layout.fillWidth: true}
+
+                Button {
+                    // Confirm adding player
+                    Layout.alignment: Qt.AlignRight
+                    text: "Add player"
+                    onClicked: {
+                        //TODO create player and save it in the list
+                        player_creation.enlarged = false
+                        appController.createPlayer(name_field.text, surname_field.text, height_field.value, null, special_field.checked);
+                    }
+                }
             }
         }
     }
@@ -50,7 +108,7 @@ ApplicationWindow {
 
             spacing: 12
 
-            // Profile selection
+            // Player creation
             Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -58,32 +116,39 @@ ApplicationWindow {
                 Layout.preferredHeight: 50
                 Layout.maximumHeight: 50
                 Layout.alignment: Qt.AlignTop
+                Layout.leftMargin: 10;
+                Layout.rightMargin: 10;
+                color: "transparent"
 
-                color: 'red'
+                Text {
+                    id: players_title
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Players"
+                    font.bold: true
+                }
 
                 Button {
-                    id: profileSelectionButton
-                    anchors.centerIn: parent
-                    text: "Inpit data"
+                    id: player_creation_button
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: players_title.right
+                    anchors.leftMargin: 10;
+                    text: "Add Player"
                     onClicked: {
                         console.log("Enlarge");
-                        profileSelection.enlarged = !profileSelection.enlarged;
+                        player_creation.enlarged = !player_creation.enlarged;
                     }
                 }
             }
 
-            // Profile details
-            Rectangle {
+            // Player List
+            ScrollView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.minimumHeight: 50
-                Layout.preferredHeight: 200
 
-                color: 'teal'
-
-                Text {
-                    anchors.centerIn: parent
-                    text: ""
+                ListView {
+                    id: playerListView
+                    model: playerList
+                    delegate: playerDelegate
                 }
             }
         }
@@ -98,27 +163,14 @@ ApplicationWindow {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.minimumHeight: 10
-                color: "transparent"
+                Layout.minimumHeight: 50
+                Layout.preferredHeight: 200
+
+                color: 'teal'
 
                 Text {
                     anchors.centerIn: parent
-                    text: "Players"
-                }
-            }
-
-            ScrollView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                ListView {
-                    model: playerList
-                    header: bannercomponent
-                    footer: Rectangle {
-                        width: parent.width; height: 30;
-                        gradient: clubcolors
-                    }
-                    delegate: playerDelegate
+                    text: "Player list"
                 }
             }
         }
@@ -142,7 +194,7 @@ ApplicationWindow {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: profileListView.currentIndex = index
+                onClicked: playerListView.currentIndex = index
             }
         }
 
