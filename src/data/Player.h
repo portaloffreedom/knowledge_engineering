@@ -18,33 +18,21 @@ class Player : public QObject {
 Q_OBJECT
 
     Q_PROPERTY(QString name
-                       READ
-                       getName
-                       WRITE
-                       setName
-                       NOTIFY
-                       nameChanged)
+                       READ getName
+                       WRITE setName
+                       NOTIFY nameChanged)
     Q_PROPERTY(QString surname
-                       READ
-                       getSurname
-                       WRITE
-                       setSurname
-                       NOTIFY
-                       surnameChanged)
+                       READ getSurname
+                       WRITE setSurname
+                       NOTIFY surnameChanged)
     Q_PROPERTY(qreal height
-                       READ
-                       getHeight
-                       WRITE
-                       setHeight
-                       NOTIFY
-                       heightChanged)
+                       READ getHeight
+                       WRITE setHeight
+                       NOTIFY heightChanged)
     Q_PROPERTY(bool special
-                       READ
-                       isSpecial
-                       WRITE
-                       setSpecial
-                       NOTIFY
-                       specialChanged)
+                       READ isSpecial
+                       WRITE setSpecial
+                       NOTIFY specialChanged)
 
 public:
     Player(QObject *parent = nullptr);

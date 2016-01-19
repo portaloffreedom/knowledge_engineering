@@ -41,6 +41,22 @@ ApplicationWindow {
                 target: player_creation_mouse_area
                 enabled: true
             }
+            PropertyChanges {
+                target: name_field
+                enabled: true
+            }
+            PropertyChanges {
+                target: surname_field
+                enabled: true
+            }
+            PropertyChanges {
+                target: special_field
+                enabled: true
+            }
+            PropertyChanges {
+                target: height_field
+                enabled: true
+            }
         }
 
         transitions: Transition {
@@ -61,12 +77,14 @@ ApplicationWindow {
 
                 TextField {
                     id: name_field
+                    enabled: false
                     Layout.fillWidth: true
                     placeholderText: "Name"
                 }
 
                 TextField {
                     id: surname_field
+                    enabled: false
                     Layout.fillWidth: true
                     placeholderText: "Surname"
                 }
@@ -74,10 +92,10 @@ ApplicationWindow {
                 RowLayout {
                     Layout.fillWidth: true
                     Label { text: "Special"; Layout.fillWidth: true }
-                    Switch { id: special_field; checked: false }
+                    Switch { id: special_field; enabled: false; checked: false }
                 }
 
-                SpinBox { id: height_field; value: 100; minimumValue: 0; maximumValue: 300; Layout.fillWidth: true}
+                SpinBox { id: height_field; enabled: false; value: 100; minimumValue: 0; maximumValue: 300; Layout.fillWidth: true}
 
                 Button {
                     // Confirm adding player
@@ -148,6 +166,10 @@ ApplicationWindow {
                 ListView {
                     id: playerListView
                     model: playerList
+                    highlight: Rectangle {
+                        color: "lightsteelblue"
+                        //radius: 5
+                    }
                     delegate: playerDelegate
                 }
             }
