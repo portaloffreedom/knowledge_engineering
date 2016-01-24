@@ -99,15 +99,36 @@ ApplicationWindow {
 
                 SpinBox { id: height_field; enabled: false; value: 100; minimumValue: 0; maximumValue: 300; Layout.fillWidth: true}
 
-                Button {
-                    // Confirm adding player
-                    Layout.alignment: Qt.AlignRight
-                    text: qsTr("Add player")
-                    onClicked: {
-                        //TODO create player and save it in the list
-                        player_creation.enlarged = false
-                        appController.createPlayer(name_field.text, surname_field.text, height_field.value, null, special_field.checked);
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Button {
+                        // Confirm adding player
+                        //Layout.alignment: Qt.AlignLeft
+                        text: qsTr("Cancel")
+                        onClicked: {
+                            //TODO create player and save it in the list
+                            player_creation.enlarged = false
+                            //UI.clearForm();
+                        }
                     }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                    }
+
+                    Button {
+                        // Confirm adding player
+                        //Layout.alignment: Qt.AlignRight
+                        text: qsTr("Add player")
+                        onClicked: {
+                            //TODO create player and save it in the list
+                            player_creation.enlarged = false
+                            appController.createPlayer(name_field.text, surname_field.text, height_field.value, null, special_field.checked);
+                            UI.clearForm();
+                        }
+                    }
+
                 }
             }
         }
