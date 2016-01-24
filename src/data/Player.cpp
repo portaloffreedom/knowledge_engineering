@@ -9,6 +9,11 @@ unsigned int Player::privateIDGenerator() {
     return ++privateIDCounter;
 }
 
+void Player::init()
+{
+    this->m_statistics = new PlayerStatistics();
+}
+
 Player::Player(QObject *parent)
         : QObject(parent)
           , name("")
@@ -17,6 +22,7 @@ Player::Player(QObject *parent)
           , picture(nullptr)
           , special(false)
           , privateID(Player::privateIDGenerator()) {
+    init();
 }
 
 Player::Player(const Player &player)
@@ -27,6 +33,7 @@ Player::Player(const Player &player)
           , picture(player.picture)
           , special(player.special)
           , privateID(player.privateID) {
+    init();
 }
 
 
@@ -37,5 +44,11 @@ Player::Player(QObject *parent, const QString &name, const QString &surname, qre
           , height(height)
           , picture(picture)
           , special(special)
-          , privateID(Player::privateIDGenerator()) {
+        , privateID(Player::privateIDGenerator()) {
+    init();
+}
+
+Player::~Player()
+{
+    delete m_statistics;
 }

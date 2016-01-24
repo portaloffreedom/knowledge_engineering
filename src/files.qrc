@@ -1,7 +1,7 @@
 <RCC>
-    <!-- QML files -->
     <qresource prefix="/">
-        <file alias="qml/window.qml">gui/qml/window.qml</file>
-        <file alias="qml/UI.js">gui/js/UI.js</file>
+        <file alias="window.qml">gui/qml/window.qml</file>
+        <file alias="js/UI.js">gui/js/UI.js</file>
+        <file alias="components/StatisticView.qml" >gui/qml/components/StatisticView.qml</file>
     </qresource>
 </RCC>

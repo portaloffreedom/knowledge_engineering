@@ -14,7 +14,7 @@ Controller::Controller(int argc, char** argv)
 }
 
 Controller::~Controller() {
-
+    delete playerQmlList;
 }
 
 int Controller::exec() {
@@ -29,7 +29,7 @@ void Controller::setup() {
     QQmlComponent* mainQmlView = new QQmlComponent(engine, this);
     connect(engine, SIGNAL(quit()), this, SLOT(quit()));
 
-    mainQmlView->loadUrl(QUrl("qrc:///qml/window.qml"));
+    mainQmlView->loadUrl(QUrl("qrc:///window.qml"));
     if (!mainQmlView->isReady()) {
         std::cerr << mainQmlView->errorString().toStdString() << std::endl;
         std::exit(-1);
@@ -40,26 +40,33 @@ void Controller::setup() {
 }
 
 void Controller::loadData() {
-    playerList = new QList<QObject *>;
+    //playerList = new QList<Player *>;
+    playerQmlList = new QQmlListProperty<Player>(this, playerList);
     createPlayer("Matteo", "De Carlo", 175.0, NULL, false);
     createPlayer("Ruben", "Sikkes", 180.0, NULL, true);
+    playerList[0]->statistics()->pace()->resetClasses();
+    playerList[0]->statistics()->pace()->addClass(Class::Type::RELATIVE_DIFFERENCE, Class::Value::GOOD);
+    playerList[1]->statistics()->physical()->resetClasses();
+    playerList[1]->statistics()->physical()->addClass(Class::Type::ABSOLUTE_DIFFERENCE, Class::Value::GOOD);
+    playerList[1]->statistics()->physical()->addClass(Class::Type::RELATIVE_DIFFERENCE, Class::Value::BAD);
 }
 
 #include <QJsonArray>
 
 void Controller::loadContext() {
+    Statistic::RegisterQmlType();
+    PlayerStatistics::RegisterQmlType();
+    Player::RegisterQmlType();
+    PlayerStatistics::RegisterQmlType();
+    Statistic::RegisterQmlType();
+
     loadData();
 
     QQmlContext *context = engine->rootContext();
-    //std::cout << "number of elements in player list:   " << playerList->size() << std::endl;
-    //std::cout << "number of elements after conversion: " << QVariant::fromValue((*playerList)).toJsonArray().size() <<
-    //std::endl;
-    context->setContextProperty("playerList", QVariant::fromValue((*playerList)));
     context->setContextProperty("appController", this);
 }
 
 void Controller::createPlayer(const QString &name, const QString &surname, qreal height, void *picture, bool special) {
-    playerList->append(new Player(this, name, surname, height, picture, special));
-    QQmlContext *context = engine->rootContext();
-    context->setContextProperty("playerList", QVariant::fromValue((*playerList)));
+    playerList.append(new Player(this, name, surname, height, picture, special));
+    emit playersChanged(playerQmlList);
 }

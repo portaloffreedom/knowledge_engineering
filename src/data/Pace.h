@@ -8,7 +8,14 @@
 #include "Statistic.h"
 
 class Pace : public Statistic {
+public:
+    Pace(QObject *parent = nullptr) : Statistic(parent) {}
+    Pace(const Pace *copy) :
+        Statistic(copy) {}
 
+    virtual QString getName() override {
+        return QString("Pace");
+    }
 };
 
 

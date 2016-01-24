@@ -14,14 +14,22 @@
 class Controller : public QApplication {
     Q_OBJECT
 
+    Q_PROPERTY(QQmlListProperty<Player> players READ players NOTIFY playersChanged)
+
 public:
     Controller(int argc, char** argv);
+    Controller(const Controller &copy);
+    Controller();
     virtual ~Controller();
 
     int exec();
 
     Q_INVOKABLE void createPlayer(const QString &name = "", const QString &surname = "", qreal height = 0,
                                   void *picture = nullptr, bool special = false);
+
+    QQmlListProperty<Player> &players() {
+        return *playerQmlList;
+    }
 
 protected:
     void setup();
@@ -32,8 +40,14 @@ protected:
 
     QQmlEngine* engine;
     QQuickWindow* window;
-    QList<QObject *> *playerList;
+    QList<Player*> playerList;
+    QQmlListProperty<Player> *playerQmlList;
+
+signals:
+    void playersChanged(QQmlListProperty<Player> *);
 };
+
+Q_DECLARE_METATYPE(Controller)
 
 
 #endif //KNOWLEDGE_ENGINEERING_CONTROLLER_H

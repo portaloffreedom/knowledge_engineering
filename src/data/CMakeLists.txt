@@ -17,6 +17,7 @@ set (knowledge_engineering_QT_HEADERS ${knowledge_engineering_QT_HEADERS}
         ${CURRENT_DIR}/Passing.h
         ${CURRENT_DIR}/Physical.h
         ${CURRENT_DIR}/Player.h
+        ${CURRENT_DIR}/playerstatistics.h
         ${CURRENT_DIR}/Shooting.h
         ${CURRENT_DIR}/Statistic.h
         PARENT_SCOPE
@@ -39,6 +40,7 @@ set(knowledge_engineering_SRCS ${knowledge_engineering_SRCS}
         ${CURRENT_DIR}/Passing.cpp
         ${CURRENT_DIR}/Physical.cpp
         ${CURRENT_DIR}/Player.cpp
+        ${CURRENT_DIR}/playerstatistics.cpp
         ${CURRENT_DIR}/Shooting.cpp
         ${CURRENT_DIR}/Statistic.cpp
         PARENT_SCOPE

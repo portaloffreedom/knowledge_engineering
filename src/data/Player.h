@@ -5,6 +5,7 @@
 #ifndef KNOWLEDGE_ENGINEERING_PLAYER_H
 #define KNOWLEDGE_ENGINEERING_PLAYER_H
 
+#include <iostream>
 #include <string>
 #include <QObject>
 #include "Dribbling.h"
@@ -13,6 +14,7 @@
 #include "Passing.h"
 #include "Pace.h"
 #include "Defending.h"
+#include "playerstatistics.h"
 
 class Player : public QObject {
 Q_OBJECT
@@ -34,26 +36,24 @@ Q_OBJECT
                        WRITE setSpecial
                        NOTIFY specialChanged)
 
+    Q_PROPERTY(PlayerStatistics* statistics READ statistics NOTIFY statisticsChanged)
+
 public:
+    static void RegisterQmlType() {
+        qmlRegisterType<Player>("org.covolunablu", 1, 0, "Player");
+    }
+
     Player(QObject *parent = nullptr);
 
     Player(const Player &player);
     Player(QObject *parent, const QString &name, const QString &surname, qreal height, void *picture, bool special);
+    virtual ~Player();
 
     QString name;
     QString surname;
     qreal height;
     void *picture; //placeholder
     bool special;
-
-    struct specialStatistics {
-        Dribbling *dribbling;
-        Shooting *shooting;
-        Physical *physical;
-        Passing *passing;
-        Pace *pace;
-        Defending *defending;
-    };
 
     const QString &getName() const {
         return name;
@@ -70,6 +70,11 @@ public:
     bool isSpecial() const {
         return special;
     }
+
+    PlayerStatistics *statistics() {
+        return m_statistics;
+    }
+
 
 public slots:
 
@@ -93,18 +98,18 @@ public slots:
     }
 
 signals:
-
     void nameChanged();
-
     void surnameChanged();
-
     void heightChanged(qreal newValue);
-
     void specialChanged(bool newValue);
+    void statisticsChanged(PlayerStatistics*);
 
 private:
     static unsigned int privateIDGenerator();
+    void init();
+
     unsigned int privateID;
+    PlayerStatistics *m_statistics;
 };
 
 Q_DECLARE_METATYPE(Player)

@@ -19,6 +19,9 @@ public:
         BAD,
     };
 
+    Class(Type type, Value value) :
+        type(type), value(value) {}
+
     Type type;
     Value value;
 };

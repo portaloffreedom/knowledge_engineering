@@ -3,7 +3,9 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.2
 // import QtQuick.Window 2.2
 //import QtQuick.Dialogs 1.2
-import "UI.js" as UI
+import org.covolunablu 1.0
+import "js/UI.js" as UI
+import "components"
 
 ApplicationWindow {
     title: qsTr("Trainer Helper")
@@ -69,7 +71,7 @@ ApplicationWindow {
 
         GroupBox {
             id: player_creation_group_box
-            title: "Insert new Player"
+            title: qsTr("Insert new Player")
             width: 500
             ColumnLayout {
                 id: column
@@ -79,19 +81,19 @@ ApplicationWindow {
                     id: name_field
                     enabled: false
                     Layout.fillWidth: true
-                    placeholderText: "Name"
+                    placeholderText: qsTr("Name")
                 }
 
                 TextField {
                     id: surname_field
                     enabled: false
                     Layout.fillWidth: true
-                    placeholderText: "Surname"
+                    placeholderText: qsTr("Surname")
                 }
 
                 RowLayout {
                     Layout.fillWidth: true
-                    Label { text: "Special"; Layout.fillWidth: true }
+                    Label { text: qsTr("Special"); Layout.fillWidth: true }
                     Switch { id: special_field; enabled: false; checked: false }
                 }
 
@@ -100,7 +102,7 @@ ApplicationWindow {
                 Button {
                     // Confirm adding player
                     Layout.alignment: Qt.AlignRight
-                    text: "Add player"
+                    text: qsTr("Add player")
                     onClicked: {
                         //TODO create player and save it in the list
                         player_creation.enlarged = false
@@ -115,6 +117,7 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 6
 
+        // Player List (and creation)
         ColumnLayout {
 
             Layout.fillWidth: true
@@ -141,7 +144,7 @@ ApplicationWindow {
                 Text {
                     id: players_title
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "Players"
+                    text: qsTr("Players")
                     font.bold: true
                 }
 
@@ -150,7 +153,7 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: players_title.right
                     anchors.leftMargin: 10;
-                    text: "Add Player"
+                    text: qsTr("Add Player")
                     onClicked: {
                         console.log("Enlarge");
                         player_creation.enlarged = !player_creation.enlarged;
@@ -165,7 +168,7 @@ ApplicationWindow {
 
                 ListView {
                     id: playerListView
-                    model: playerList
+                    model: appController.players
                     highlight: Rectangle {
                         color: "lightsteelblue"
                         //radius: 5
@@ -175,24 +178,57 @@ ApplicationWindow {
             }
         }
 
+        // Player Details
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumWidth: 100
             Layout.preferredWidth: 200
             Layout.preferredHeight: 100
+            Layout.alignment: Qt.AlignTop
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumHeight: 50
-                Layout.preferredHeight: 200
+                Layout.alignment: Qt.AlignTop
+                Layout.minimumHeight: 40
 
                 color: 'teal'
 
                 Text {
                     anchors.centerIn: parent
-                    text: "Player list"
+                    font.bold: true
+                    text: UI.selectedPlayer().name + " " + UI.selectedPlayer().surname
+                }
+            }
+
+            GridLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                rows: 2
+                columns: 3
+
+                StatisticView {
+                    statistic: UI.selectedPlayer().statistics.defending
+                }
+
+                StatisticView {
+                    statistic: UI.selectedPlayer().statistics.dribbling
+                }
+
+                StatisticView {
+                    statistic: UI.selectedPlayer().statistics.pace
+                }
+
+                StatisticView {
+                    statistic: UI.selectedPlayer().statistics.passing
+                }
+
+                StatisticView {
+                    statistic: UI.selectedPlayer().statistics.physical
+                }
+
+                StatisticView {
+                    statistic: UI.selectedPlayer().statistics.shooting
                 }
             }
         }
@@ -201,7 +237,7 @@ ApplicationWindow {
     Component {
         id: playerDelegate
         Item {
-            property variant profileData: model
+            property variant playerData: model
             id: playerItem
             width: parent.width; height: child.height+10
             Column {
