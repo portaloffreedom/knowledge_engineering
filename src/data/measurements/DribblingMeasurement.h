@@ -8,7 +8,12 @@
 #include "Measurement.h"
 
 class DribblingMeasurement : public Measurement {
-
+public:
+    DribblingMeasurement(float raw_value, float value)
+        : Measurement(raw_value, value)
+    {
+        m_type = type::dribbling;
+    }
 };
 
 

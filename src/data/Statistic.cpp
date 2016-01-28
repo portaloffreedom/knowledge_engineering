@@ -6,7 +6,7 @@
 
 Statistic::Statistic(QObject *parent) :
     QObject(parent),
-    boundaries({0,100})
+    boundaries({40,60})
 {
     addClass(Class::Type::NORMAL);
 }
@@ -21,36 +21,35 @@ Statistic::Statistic(QObject *parent) :
 
 Statistic::Statistic(const Statistic *statistic) :
     QObject(statistic->parent()),
-    avarageHistory(statistic->avarageHistory),
+    averageHistory(statistic->averageHistory),
     boundaries(statistic->boundaries),
     classes(statistic->classes)
 {
 
 }
 
-qreal Statistic::avarageValue() {
-    qreal avarage = 0;
+qreal Statistic::averageValue() {
+    qreal average = 0;
     int i = 0;
-    for (qreal value: avarageHistory) {
-        avarage += value;
+    for (qreal value: averageHistory) {
+        average += value;
         i++;
     }
 
     if (i > 0)
-        avarage /= i;
+        average /= i;
 
-    return avarage;
+    return average;
 }
 
-void Statistic::addClass(Class::Type type, Class::Value value)
+void Statistic::addClass(Class _class)
 {
-    if (type == Class::Type::NORMAL) {
+    if (_class.type == Class::Type::NORMAL) {
         Q_ASSERT(classes.length() == 0);
-        value = Class::Value::GOOD;
+        _class.value = Class::Value::GOOD;
     }
-    classes.append(Class(type, value));
+    classes.append(_class);
 
-    emit avarageValueChange();
     emit isOutstandingChanged();
     emit isOutstandingGoodChanged();
     emit hasSuddenChangedChanged();
@@ -61,7 +60,6 @@ void Statistic::addClass(Class::Type type, Class::Value value)
 void Statistic::resetClasses()
 {
     classes.clear();
-    emit avarageValueChange();
     emit isOutstandingChanged();
     emit isOutstandingGoodChanged();
     emit hasSuddenChangedChanged();
@@ -123,4 +121,45 @@ bool Statistic::isNormal()
         return false;
     else
         return true;
+}
+
+#define AVERAGE_HISTORY_FIELD "history"
+#define CLASSES_FIELD "classes"
+
+void Statistic::writeJSON(QJsonObject &obj) const
+{
+    QJsonArray historyArray,
+            classesArray;
+
+    for (const qreal value: averageHistory) {
+        historyArray.append(value);
+    }
+    for (const Class &c: classes) {
+        QJsonObject class_obj;
+        c.writeJSON(class_obj);
+        classesArray.append(class_obj);
+    }
+
+    obj[AVERAGE_HISTORY_FIELD] = historyArray;
+    obj[CLASSES_FIELD] = classesArray;
+}
+
+void Statistic::readJSON(const QJsonObject &obj)
+{
+    const QJsonArray historyArray = obj[AVERAGE_HISTORY_FIELD].toArray(),
+            classesArray = obj[CLASSES_FIELD].toArray();
+
+    averageHistory.clear();
+    for (auto it = historyArray.constBegin(); it < historyArray.constEnd(); it++) {
+        averageHistory.append((*it).toDouble());
+    }
+
+    classes.clear();
+    for (auto it = classesArray.constBegin(); it < classesArray.constEnd(); it++) {
+        const QJsonObject class_obj = (*it).toObject();
+        Class c;
+        c.readJSON(class_obj);
+        classes.append(c);
+    }
+
 }

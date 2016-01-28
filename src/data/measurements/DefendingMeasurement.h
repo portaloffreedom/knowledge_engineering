@@ -8,7 +8,12 @@
 #include "Measurement.h"
 
 class DefendingMeasurement : public Measurement {
-
+public:
+    DefendingMeasurement(float raw_value, float value)
+        : Measurement(raw_value, value)
+    {
+        m_type = type::defending;
+    }
 };
 
 

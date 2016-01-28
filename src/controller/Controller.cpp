@@ -5,6 +5,8 @@
 #include <iostream>
 #include <QQmlContext>
 #include "Controller.h"
+#include "measurements/Exercise.h"
+#include "measurements/Measurement.h"
 
 Controller::Controller(int argc, char** argv)
         : QApplication(argc, argv),
@@ -14,6 +16,7 @@ Controller::Controller(int argc, char** argv)
 }
 
 Controller::~Controller() {
+    saveData();
     delete playerQmlList;
 }
 
@@ -39,19 +42,85 @@ void Controller::setup() {
     window = qobject_cast<QQuickWindow*>(topLevel);
 }
 
-void Controller::loadData() {
+#define SAVE_FILENAME "data.json"
+#define VERSION_FIELD "version"
+#define SAVING_VERSION "1.0"
+#define PLAYERS_FIELD "players"
+
+bool Controller::loadData() {
     //playerList = new QList<Player *>;
     playerQmlList = new QQmlListProperty<Player>(this, playerList);
+    /*
     createPlayer("Matteo", "De Carlo", 175.0, NULL, false);
-    createPlayer("Ruben", "Sikkes", 180.0, NULL, true);
+    createPlayer("Ruben", "Sikkes", 184.0, NULL, false);
     playerList[0]->statistics()->pace()->resetClasses();
-    playerList[0]->statistics()->pace()->addClass(Class::Type::RELATIVE_DIFFERENCE, Class::Value::GOOD);
+    playerList[0]->statistics()->pace()->addClass(Class(Class::Type::RELATIVE_DIFFERENCE, Class::Value::GOOD));
     playerList[1]->statistics()->physical()->resetClasses();
-    playerList[1]->statistics()->physical()->addClass(Class::Type::ABSOLUTE_DIFFERENCE, Class::Value::GOOD);
-    playerList[1]->statistics()->physical()->addClass(Class::Type::RELATIVE_DIFFERENCE, Class::Value::BAD);
+    playerList[1]->statistics()->physical()->addClass(Class(Class::Type::ABSOLUTE_DIFFERENCE, Class::Value::GOOD));
+    playerList[1]->statistics()->physical()->addClass(Class(Class::Type::RELATIVE_DIFFERENCE, Class::Value::BAD));
+    return true;
+    */
+
+    QFile loadFile(QStringLiteral(SAVE_FILENAME));
+
+    if (!loadFile.open(QIODevice::ReadOnly)) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+    QByteArray saveData = loadFile.readAll();
+
+    QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+
+    const QJsonObject mainObject = loadDoc.object();
+
+    const QString version = mainObject[VERSION_FIELD].toString();
+    if (version.compare(SAVING_VERSION) != 0) {
+        //TODO conversion to new format function
+        qWarning("version incopatible, loading discarded");
+        return false;
+    }
+
+    const QJsonArray playerArray = mainObject[PLAYERS_FIELD].toArray();
+    for (auto it = playerArray.constBegin(); it < playerArray.constEnd(); it++) {
+         Player *p = new Player();
+         playerList.append(p);
+
+         p->readJSON((*it).toObject());
+    }
+
+    return true;
 }
 
-#include <QJsonArray>
+bool Controller::saveData() const
+{
+    QFile saveFile(QStringLiteral(SAVE_FILENAME));
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+    // saving data creation section
+    QJsonObject savingObject;
+    savingObject[VERSION_FIELD] = SAVING_VERSION;
+
+    QJsonArray playerArray;
+
+    foreach (const Player *player, playerList) {
+        QJsonObject playerObject;
+        player->writeJSON(playerObject);
+        playerArray.append(playerObject);
+    }
+
+    savingObject[PLAYERS_FIELD] = playerArray;
+
+    // saving to disk
+    QJsonDocument saveDoc(savingObject);
+    saveFile.write(saveDoc.toJson());
+
+    return true;
+}
 
 void Controller::loadContext() {
     Statistic::RegisterQmlType();
@@ -59,6 +128,8 @@ void Controller::loadContext() {
     Player::RegisterQmlType();
     PlayerStatistics::RegisterQmlType();
     Statistic::RegisterQmlType();
+    Measurement::RegisterQmlType();
+    Exercise::RegisterQmlType();
 
     loadData();
 

@@ -15,6 +15,7 @@
 #include "Pace.h"
 #include "Defending.h"
 #include "playerstatistics.h"
+#include "measurements/Measurement.h"
 
 class Player : public QObject {
 Q_OBJECT
@@ -55,6 +56,7 @@ public:
     void *picture; //placeholder
     bool special;
 
+    // getters
     const QString &getName() const {
         return name;
     }
@@ -75,9 +77,16 @@ public:
         return m_statistics;
     }
 
+    Q_INVOKABLE void addMeasurement(Measurement *measurement) {
+        m_statistics->insertMeasurement(measurement);
+    }
+
+    void writeJSON(QJsonObject &obj) const;
+    void readJSON(const QJsonObject &obj);
 
 public slots:
 
+    // setters
     void setName(const QString &name) {
         Player::name = name;
     }
@@ -112,6 +121,6 @@ private:
     PlayerStatistics *m_statistics;
 };
 
-Q_DECLARE_METATYPE(Player)
+Q_DECLARE_METATYPE(Player*)
 
 #endif //KNOWLEDGE_ENGINEERING_PLAYER_H

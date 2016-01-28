@@ -10,6 +10,7 @@
 #include <QQuickWindow>
 #include <QApplication>
 #include "Player.h"
+#include "measurements/Measurement.h"
 
 class Controller : public QApplication {
     Q_OBJECT
@@ -27,6 +28,11 @@ public:
     Q_INVOKABLE void createPlayer(const QString &name = "", const QString &surname = "", qreal height = 0,
                                   void *picture = nullptr, bool special = false);
 
+    Q_INVOKABLE void insertMeasurement(int playerIndex, Measurement *measurement) {
+        Player *player = playerList.at(playerIndex);
+        player->addMeasurement(measurement);
+    }
+
     QQmlListProperty<Player> &players() {
         return *playerQmlList;
     }
@@ -34,7 +40,8 @@ public:
 protected:
     void setup();
 
-    void loadData();
+    bool loadData();
+    bool saveData() const;
 
     void loadContext();
 

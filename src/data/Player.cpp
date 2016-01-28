@@ -52,3 +52,35 @@ Player::~Player()
 {
     delete m_statistics;
 }
+
+#define NAME_FIELD "name"
+#define SURNAME_FIELD "surname"
+#define HEIGHT_FIELD "height"
+#define SPECIAL_FIELD "special"
+#define PRIVATE_ID_FIELD "private_id"
+#define STATISTICS "statistcs"
+
+void Player::writeJSON(QJsonObject &obj) const
+{
+    obj[NAME_FIELD] = this->name;
+    obj[SURNAME_FIELD] = this->surname;
+    obj[HEIGHT_FIELD] = this->height;
+    obj[SPECIAL_FIELD] = this->special;
+    obj[PRIVATE_ID_FIELD] = int(this->privateID);
+
+    QJsonObject statistics;
+    m_statistics->writeJSON(statistics);
+    obj[STATISTICS] = statistics;
+}
+
+void Player::readJSON(const QJsonObject &obj)
+{
+    this->name = obj[NAME_FIELD].toString();
+    this->surname = obj[SURNAME_FIELD].toString();
+    this->height = obj[HEIGHT_FIELD].toDouble();
+    this->special = obj[SPECIAL_FIELD].toBool();
+    this->privateID = obj[PRIVATE_ID_FIELD].toInt();
+
+    const QJsonObject statistics =  obj[STATISTICS].toObject();
+    m_statistics->readJSON(statistics);
+}

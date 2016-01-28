@@ -13,7 +13,7 @@
 class Statistic : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(qreal avarageValue READ avarageValue NOTIFY avarageValueChange)
+    Q_PROPERTY(qreal averageValue READ averageValue NOTIFY averageValueChange)
     Q_PROPERTY(QString name READ getName)
     Q_PROPERTY(bool isOutstanding READ isOutstanding NOTIFY isOutstandingChanged)
     Q_PROPERTY(bool isOutstandingGood READ isOutstandingGood NOTIFY isOutstandingGoodChanged)
@@ -27,20 +27,29 @@ public:
     }
 
     struct Boundaries {
-        float upper;
-        float lower;
+        qreal lower;
+        qreal upper;
     };
 
     Statistic(QObject *parent = nullptr);
     Statistic(const Statistic *statistic);
     virtual ~Statistic() {}
 
-    qreal avarageValue();
+    qreal averageValue();
     Q_INVOKABLE virtual QString getName() {
         return QString("invalid");
     }
 
-    void addClass(Class::Type type, Class::Value value = Class::Value::GOOD);
+    virtual void addValue(float value) {
+        this->averageHistory.append(value);
+        emit averageValueChange();
+    }
+
+    qreal last_value() {
+        return averageHistory.last();
+    }
+
+    void addClass(Class _class);
     void resetClasses();
 
     bool isOutstanding();
@@ -49,15 +58,20 @@ public:
     bool hasSuddenChangedGood();
     bool isNormal();
 
-private:
-    QList<qreal> avarageHistory;
     Boundaries boundaries;
+
+    void writeJSON(QJsonObject &obj) const;
+    void readJSON(const QJsonObject &obj);
+
+private:
+    QList<qreal> averageHistory;
     QList<Class> classes;
 
     Class *hasClass(Class::Type);
 
+
 signals:
-    void avarageValueChange();
+    void averageValueChange();
     void isOutstandingChanged();
     void isOutstandingGoodChanged();
     void hasSuddenChangedChanged();

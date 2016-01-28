@@ -20,6 +20,8 @@ set (knowledge_engineering_QT_HEADERS ${knowledge_engineering_QT_HEADERS}
         ${CURRENT_DIR}/playerstatistics.h
         ${CURRENT_DIR}/Shooting.h
         ${CURRENT_DIR}/Statistic.h
+        ${CURRENT_DIR}/difference.h
+        ${CURRENT_DIR}/normal.h
         PARENT_SCOPE
         )
 
@@ -43,5 +45,7 @@ set(knowledge_engineering_SRCS ${knowledge_engineering_SRCS}
         ${CURRENT_DIR}/playerstatistics.cpp
         ${CURRENT_DIR}/Shooting.cpp
         ${CURRENT_DIR}/Statistic.cpp
+        ${CURRENT_DIR}/difference.cpp
+        ${CURRENT_DIR}/normal.cpp
         PARENT_SCOPE
         )

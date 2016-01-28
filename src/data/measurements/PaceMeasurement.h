@@ -8,7 +8,12 @@
 #include "Measurement.h"
 
 class PaceMeasurement : public Measurement {
-
+public:
+    PaceMeasurement(float raw_value, float value)
+        : Measurement(raw_value, value)
+    {
+        m_type = type::pace;
+    }
 };
 
 
