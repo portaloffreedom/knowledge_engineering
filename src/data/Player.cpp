@@ -12,6 +12,12 @@ unsigned int Player::privateIDGenerator() {
 void Player::init()
 {
     this->m_statistics = new PlayerStatistics();
+    connect(m_statistics, SIGNAL(defendingChanged(Statistic*)), this, SLOT(checkSpecial(Statistic*)));
+    connect(m_statistics, SIGNAL(dribblingChanged(Statistic*)), this, SLOT(checkSpecial(Statistic*)));
+    connect(m_statistics, SIGNAL(paceChanged(Statistic*)),      this, SLOT(checkSpecial(Statistic*)));
+    connect(m_statistics, SIGNAL(passingChanged(Statistic*)),   this, SLOT(checkSpecial(Statistic*)));
+    connect(m_statistics, SIGNAL(physicalChanged(Statistic*)),  this, SLOT(checkSpecial(Statistic*)));
+    connect(m_statistics, SIGNAL(shootingChanged(Statistic*)),  this, SLOT(checkSpecial(Statistic*)));
 }
 
 Player::Player(QObject *parent)
@@ -83,4 +89,21 @@ void Player::readJSON(const QJsonObject &obj)
 
     const QJsonObject statistics =  obj[STATISTICS].toObject();
     m_statistics->readJSON(statistics);
+}
+
+void Player::checkSpecial(Statistic* statistic) {
+    if (!statistic->isNormal()) {
+        this->special = true;
+        emit specialChanged(this->special);
+    } else if (m_statistics->defending()->isNormal() &&
+               m_statistics->dribbling()->isNormal() &&
+               m_statistics->pace()->isNormal() &&
+               m_statistics->passing()->isNormal() &&
+               m_statistics->physical()->isNormal() &&
+               m_statistics->shooting()->isNormal()) {
+        this->special = false;
+        emit specialChanged(this->special);
+    } else {
+        // leave special true
+    }
 }

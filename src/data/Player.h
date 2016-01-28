@@ -106,6 +106,8 @@ public slots:
         Player::special = special;
     }
 
+    void checkSpecial(Statistic *statistic);
+
 signals:
     void nameChanged();
     void surnameChanged();
