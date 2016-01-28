@@ -93,16 +93,14 @@ void Player::readJSON(const QJsonObject &obj)
 
 void Player::checkSpecial(Statistic* statistic) {
     if (!statistic->isNormal()) {
-        this->special = true;
-        emit specialChanged(this->special);
+        setSpecial(true);
     } else if (m_statistics->defending()->isNormal() &&
                m_statistics->dribbling()->isNormal() &&
                m_statistics->pace()->isNormal() &&
                m_statistics->passing()->isNormal() &&
                m_statistics->physical()->isNormal() &&
                m_statistics->shooting()->isNormal()) {
-        this->special = false;
-        emit specialChanged(this->special);
+        setSpecial(false);
     } else {
         // leave special true
     }

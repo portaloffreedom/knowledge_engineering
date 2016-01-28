@@ -89,21 +89,25 @@ public slots:
     // setters
     void setName(const QString &name) {
         Player::name = name;
+        emit nameChanged();
     }
 
 
     void setSurname(const QString &surname) {
         Player::surname = surname;
+        emit surnameChanged();
     }
 
 
     void setHeight(qreal height) {
         Player::height = height;
+        emit heightChanged(height);
     }
 
 
     void setSpecial(bool special) {
         Player::special = special;
+        emit specialChanged(special);
     }
 
     void checkSpecial(Statistic *statistic);
